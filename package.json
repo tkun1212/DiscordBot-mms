@@ -1,0 +1,9 @@
+{
+  "name": "mms-bot",
+  "version": "1.0.0",
+  "description": "このコードはめめBOTのコードです。",
+  "main": "main.js",
+  "author": "tkun1212",
+  "license": "GPL-3.0",
+  "private": true
+}

@@ -31,9 +31,20 @@
 - `/leaderboard`-お金を持ってる人を表示します
 - `/money`-自分又は他人の残金を表示します。
 
-
 ## 3.インストール方法
 1. `git clone https://github.com/tkun1212/mms-bot.git` でこのリポジトリをクローンしてください。
 2. このコードは`yarn install`で必要なパッケージをインストールできます。
 3. `.env.example`の名前を`.env`に変更し各項目に [Discord開発者ポータル](https://discord.com/developers/applications) で入手した情報を各項目に記述してください。
 4. `yarn start`で実行ができます。
+
+## 開発者の連絡先
+- Discord - 112_9.meme
+- サポートサーバー - [めめ鯖](https://discord.gg/xvcCEGBeTN)
+- X - [@meme_112_9](https://x.com/meme_112_9)
+## 貢献について
+### 貢献のルール
+1. フォルダ構成は変更しない
+2. 今ある機能を消さない
+3. コードを読みやすく、コメントは適切に
+4. ESLint / Prettier などのルールがある場合は準拠してください。
+5. セキュリティやパフォーマンスに配慮しましょう。

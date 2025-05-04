@@ -1,0 +1,30 @@
+{
+  "name": "d_bot",
+  "version": "1.0.0",
+  "description": "Discord Bot to manage various commands and utilities.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js"
+  ],
+  "author": "tkun1212",
+  "license": "GPL - 3.0",
+  "dependencies": {
+    "@discordjs/rest": "^2.4.3",
+    "chalk": "^5.4.1",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.5.0",
+    "inquirer": "^8.2.6",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "prettier": "^2.8.8"
+  }
+}

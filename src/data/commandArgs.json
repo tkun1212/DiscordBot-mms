@@ -1,0 +1,13 @@
+{
+    "ban": ["target", "reason", "del"],
+    "dice": ["sides", "count"],
+    "help": [],
+    "kick": ["target", "reason", "del"],
+    "ping": ["client"],
+    "v_kick": ["target", "reason"],
+    "user_i": ["target"],
+    "server_i": [],
+    "role": ["role1", "role2", "role3", "role4", "role5"],
+    "mute": ["target", "time", "reason"],
+    "del": ["count", "user", "userid"]
+}

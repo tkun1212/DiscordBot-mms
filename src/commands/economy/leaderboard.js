@@ -21,7 +21,7 @@ module.exports = {
 
         db.all("SELECT userId, balance FROM economy ORDER BY balance DESC", [], async (err, rows) => {
             if (err) {
-                console.error(err);
+                console.log(err);
                 await interaction.reply({ content: 'ランキング取得中にエラーが発生しました。', ephemeral: true });
                 return;
             }

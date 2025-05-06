@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const economyManager = require('../../utils/economyManager.js'); // データ保存用に再利用
+const logger = require('../../utils/logger.js'); // ログ記録用
 
 const omikujiResults = {
     overall: [
@@ -27,18 +28,23 @@ module.exports = {
         const userId = interaction.user.id;
         const todayKey = new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' });
 
-        // データベースから今日の結果を取得
-        const existingResult = await economyManager.getOmikujiResult(userId, todayKey);
-        if (existingResult) {
-            return interaction.reply({ content: '🎋 今日のおみくじ結果は既に引いています！以下が結果です。', embeds: [createOmikujiEmbed(existingResult, interaction.user)] });
+        try {
+            // データベースから今日の結果を取得
+            const existingResult = await economyManager.getOmikujiResult(userId, todayKey);
+            if (existingResult) {
+                return interaction.reply({ content: '🎋 今日のおみくじ結果は既に引いています！以下が結果です。', embeds: [createOmikujiEmbed(existingResult, interaction.user)] });
+            }
+
+            // 新しい結果を生成
+            const result = generateOmikujiResult();
+            await economyManager.saveOmikujiResult(userId, todayKey, result);
+
+            // 結果を返信
+            await interaction.reply({ embeds: [createOmikujiEmbed(result, interaction.user)] });
+        } catch (error) {
+            logger.error('Error in /omikuji command:', error);
+            await interaction.reply({ content: 'おみくじの実行中にエラーが発生しました。', ephemeral: true });
         }
-
-        // 新しい結果を生成
-        const result = generateOmikujiResult();
-        await economyManager.saveOmikujiResult(userId, todayKey, result);
-
-        // 結果を返信
-        await interaction.reply({ embeds: [createOmikujiEmbed(result, interaction.user)] });
     }
 };
 

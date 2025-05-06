@@ -64,9 +64,9 @@ async function startClient() {
         logger.info(`✅ Bot にログインしました: ${client.user?.tag ?? '(不明なユーザー)'}`);
         return client;
     } catch (error) {
-        logger.error('❌ Bot 起動時にエラーが発生しました:', error);
+        logger.error('❌ Bot 起動時にエラーが発生しました:', error.message);
         client = null;
-        throw error;
+        return null; // プロセスを落とさない
     }
 }
 
@@ -80,7 +80,7 @@ async function stopClient() {
         await client.destroy();
         logger.info('🛑 Bot を停止しました。');
     } catch (error) {
-        logger.error('❌ Bot 停止時にエラーが発生しました:', error);
+        logger.error('❌ Bot 停止時にエラーが発生しました:', error.message);
     } finally {
         client = null;
     }

@@ -9,7 +9,7 @@ const commandCache = new Map();
 
 /**
  * コマンド名またはエイリアスから実際のコマンド名を解決する
- * @param {string} inputName 
+ * @param {string} inputName
  * @returns {string}
  */
 function resolveCommandName(inputName) {
@@ -43,40 +43,51 @@ module.exports = {
     async execute(message, client) {
         if (!message.content.startsWith(prefix) || message.author.bot || !message.guild) return;
 
+        /** 入力された引数
+         * @type {string[]}
+         */
         const inputArgs = message.content.slice(prefix.length).trim().split(/\s+/);
+        /** コマンド名
+         * @type {string}
+         */
         const commandName = inputArgs.shift().toLowerCase();
-        const resolvedName = resolveCommandName(commandName);
+        /** 実際のコマンド名
+         * @type {string}
+         * @description resolveCommandNameでエイリアスなどを解決されたコマンド名
+         */
+        const resolvedCommandName = resolveCommandName(commandName);
 
-        if (!resolvedName) {
+        if (!resolvedCommandName) {
             logger.warn(`Command not found or invalid alias: ${commandName}`);
             return;
         }
 
-        let command = commandCache.get(resolvedName);
+        /** コマンドのファイル */
+        let command = commandCache.get(resolvedCommandName);
 
         if (!command) {
             try {
-                const commandPath = findCommandFile(path.join(__dirname, '../commands'), resolvedName);
+                const commandPath = findCommandFile(path.join(__dirname, '../commands'), resolvedCommandName);
                 if (!commandPath) {
-                    logger.warn(`Command module not found: ${resolvedName}`);
+                    logger.warn(`Command module not found: ${resolvedCommandName}`);
                     return;
                 }
                 command = require(commandPath);
-                commandCache.set(resolvedName, command);
+                commandCache.set(resolvedCommandName, command);
             } catch (err) {
-                logger.warn(`Command module failed to load: ${resolvedName}`, err);
+                logger.warn(`Command module failed to load: ${resolvedCommandName}`, err);
                 return;
             }
         }
 
-        if (typeof command.executeMessage !== 'function') {
+        /*if (typeof command.executeMessage !== 'function') {
             logger.warn(`Command "${resolvedName}" does not export "executeMessage"`);
             return;
-        }
+        }*/
 
-        logger.info(`Command called: "${resolvedName}" by ${message.author.tag} (ID: ${message.author.id})`);
+        logger.info(`Command called: "${resolvedCommandName}" by ${message.author.tag} (ID: ${message.author.id})`);
 
-        const args = (commandArgs[resolvedName] || []).map(arg => {
+        const args = (commandArgs[resolvedCommandName] || []).map(arg => {
             switch (arg) {
                 case 'client': return client;
                 case 'args': return inputArgs;
@@ -87,7 +98,7 @@ module.exports = {
         try {
             await command.executeMessage(message, ...args);
         } catch (error) {
-            logger.error(`Error executing command "${resolvedName}":`, error);
+            logger.error(`Error executing command "${resolvedCommandName}":`, error);
             try {
                 await message.reply({
                     content: 'コマンド実行中にエラーが発生しました。Bot管理者に連絡してください。',

@@ -1,4 +1,4 @@
-const { MessageFlags } = require('discord.js');
+const { MessageFlags, ChatInputCommandInteraction } = require('discord.js');
 const logger = require('../utils/logger.js');
 const commandArgs = require('../data/commandArgs.json');
 const path = require('path');
@@ -24,6 +24,25 @@ function findCommandFile(baseDir, commandName) {
     return null;
 }
 
+/**
+ * コマンドのoptionをinteractionから取得
+ * @param {ChatInputCommandInteraction} interaction
+ * @returns {object} コマンドのoptionをkey-value形式で取得
+ *  */
+function getOptionsAsObject(interaction) {
+    const data = {};
+
+    for (const option of interaction.options.data) {
+        if (option.name && 'value' in option) {
+            data[option.name] = option.value;
+        } else if (option.user) {
+            data[option.name] = option.user;
+        }
+    }
+
+    return data;
+}
+
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
@@ -44,16 +63,21 @@ module.exports = {
             return;
         }
 
-        if (typeof command.executeSlash !== 'function') {
+        /*if (typeof command.executeSlash !== 'function') {
             logger.warn(`Command "${commandName}" does not export "executeSlash"`);
             return;
-        }
+        }*/
 
         logger.info(`Command called: "${commandName}" by ${user.tag} (ID: ${user.id})`);
 
+        inputArgs = getOptionsAsObject(interaction);
+
         const args = (commandArgs[commandName] || []).map(arg => {
-            if (arg === 'client') return client;
-            return undefined;
+            switch (arg) {
+                case 'client': return client;
+                case 'args': return inputArgs;
+                default: return undefined;
+            }
         });
 
         try {

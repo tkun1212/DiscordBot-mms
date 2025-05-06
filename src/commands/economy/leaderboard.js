@@ -1,30 +1,23 @@
 // src/commands/top.js
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-// データベースのパス
-const dbPath = path.join(__dirname, '../data/economy.db');
+const db = require('../../utils/database.js');
+const logger = require('../../utils/logger.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('leaderboard')
         .setDescription('サーバー内の所持金ランキングを表示します'),
 
-    /**
-     * スラッシュコマンドの処理
-     * @param {import('discord.js').ChatInputCommandInteraction} interaction
-     */
     async executeSlash(interaction) {
         const userId = interaction.user.id;
-        const db = new sqlite3.Database(dbPath);
 
-        db.all("SELECT userId, balance FROM economy ORDER BY balance DESC", [], async (err, rows) => {
-            if (err) {
-                console.log(err);
-                await interaction.reply({ content: 'ランキング取得中にエラーが発生しました。', ephemeral: true });
-                return;
-            }
+        try {
+            const rows = await new Promise((resolve, reject) => {
+                db.all("SELECT userId, balance FROM economy ORDER BY balance DESC", [], (err, rows) => {
+                    if (err) return reject(err);
+                    resolve(rows);
+                });
+            });
 
             // ランキング上位5名
             const topList = rows.slice(0, 5);
@@ -58,8 +51,9 @@ module.exports = {
             }
 
             await interaction.reply({ embeds: [embed] });
-        });
-
-        db.close();
+        } catch (error) {
+            logger.error('リーダーボード取得中にエラーが発生しました:', error);
+            await interaction.reply({ content: 'ランキング取得中にエラーが発生しました。', ephemeral: true });
+        }
     }
 };

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -28,31 +28,41 @@ module.exports = {
         const result = Array.from({ length: count }, () => roll(sides));
         const total = result.reduce((sum, value) => sum + value, 0);
 
+        const embed = new EmbedBuilder()
+            .setColor('#0099ff') // 青
+            .setTitle('🎲 サイコロの結果')
+            .setTimestamp();
+
         if (count >= 15) {
             const resultChunks = [];
             for (let i = 0; i < result.length; i += 15) {
                 resultChunks.push(result.slice(i, i + 15).join(', '));
             }
 
-            await replyMethod({
-                content: `🎲 サイコロの結果の合計は **${total}** です！\n詳細:\n${resultChunks.join('\n')}`
-            });
+            embed.setDescription(`サイコロの結果の合計は **${total}** です！`)
+                .addFields({ name: '詳細', value: resultChunks.join('\n') });
         } else {
-            await replyMethod({
-                content: `🎲 サイコロの結果は\n${result.join(', ')}\n合計: **${total}**\nです！`
-            });
+            embed.setDescription(`サイコロの結果は以下の通りです。`)
+                .addFields(
+                    { name: '結果', value: result.join(', '), inline: false },
+                    { name: '合計', value: `**${total}**`, inline: false }
+                );
         }
+
+        await replyMethod({ embeds: [embed] });
     },
     async executeSlash(interaction) {
-        const sides = interaction.options.getInteger('sides');
-        const count = interaction.options.getInteger('count');
-
-        await this.execute(sides, count, (msg) => interaction.reply(msg));
+        await this.execute(
+            interaction.options.getInteger('sides'),
+            interaction.options.getInteger('count'),
+            (msg) => interaction.reply(msg)
+        );
     },
     async executeMessage(message, args) {
-        const sides = parseInt(args[0]);
-        const count = parseInt(args[1]);
-
-        await this.execute(sides, count, (msg) => message.reply(msg));
+        await this.execute(
+            parseInt(args[0]),
+            parseInt(args[1]),
+            (msg) => message.reply(msg)
+        );
     }
 };

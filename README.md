@@ -67,6 +67,9 @@
 3. `.env.example`の名前を`.env`に変更し各項目に [Discord開発者ポータル](https://discord.com/developers/applications) で入手した情報を各項目に記述してください。
 4. `yarn start`で実行ができます。
 
+## 5. 現在発見されてるバグ
+1. ゴミ箱のリアクションでBOTの発言したすべてのメッセージが削除される
+
 ## 開発者の連絡先
 - Discord - 112_9.meme
 - サポートサーバー - [めめ鯖](https://discord.gg/xvcCEGBeTN)

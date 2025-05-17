@@ -72,5 +72,4 @@
 
 ## 開発者の連絡先
 - Discord - 112_9.meme
-- サポートサーバー - [めめ鯖](https://discord.gg/xvcCEGBeTN)
 - X - [@meme_112_9](https://x.com/meme_112_9)
